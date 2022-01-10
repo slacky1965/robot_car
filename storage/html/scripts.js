@@ -125,8 +125,14 @@ async function command_car(command, val) {
             let command = data.command;
             
             if (command_stop) {
-                if (command == "forward_start" || command == "back_start" || command == "left_start" || command == "right_start") {
-                	command_car("forward_stop");
+                if (command == "forward_start") {
+                    command_car("forward_stop");
+                } else if (command == "back_start") {
+                    command_car("back_stop");
+                }  else if (command == "left_start") {
+                    command_car("left_stop");
+                } else if (command == "right_start") {
+                	command_car("right_stop");
                 }
             } 
             
