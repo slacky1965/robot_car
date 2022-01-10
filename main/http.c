@@ -210,9 +210,8 @@ static esp_err_t webserver_car(httpd_req_t *req) {
 
 static esp_err_t webserver_get_car_status(httpd_req_t *req) {
 
-    cJSON *root = get_status_car();
-
     char *str;
+    cJSON *root = get_status_car();
 
     if (root) {
         str = cJSON_Print(root);
