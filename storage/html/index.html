@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset=utf-8>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <title>ESP32 Robot Car</title>
+</head>
+
+<body>
+    <section class="main-body">
+        <div class="arrows">
+            <div style="text-align: center;"><br />Speed: <span id="val_speed"></span><br />
+                <input type="range" min="1" max="255" class="slider" id="speed" onmouseup="command_car('speed', Number(this.value))" ontouchend="command_car('speed', Number(this.value))" oninput="print_speed(Number(this.value))">
+            </div><br />
+            <button class="button up-button" type="button" onmousedown="command_car('forward_start')" onmouseup="command_car('forward_stop')" ontouchstart="command_car('forward')">
+                <i class="arrow up"></i></button>
+            <br />
+            <button class="button" type="button" onmousedown="command_car('left_start')" onmouseup="command_car('left_stop')" ontouchstart="command_car('left_start')" ontouchend="command_car('left_stop')"> <i 
+                    class="arrow left"></i></button>
+
+            <button class="button stop-button" type="button" onmousedown="command_car('stop')" ontouchstart="command_car('stop')"> <i
+                        class="stop"></i>Stop</button>
+
+            <button class="button" type="button" onmousedown="command_car('right_start')" onmouseup="command_car('right_stop')" ontouchstart="command_car('right_start')" ontouchend="command_car('right_stop')"><i
+                    class="arrow right"></i></button>
+            <br />
+            <button class="button" type="button" onmousedown="command_car('back_start')" onmouseup="command_car('back_stop')" ontouchstart="command_car('back')"><i
+                class="arrow down"></i></button>
+            <br />
+            <button class="button led" type="button" onmousedown="command_car('led')">LED</button>
+        </div>
+        <br /><br />
+        <button class="button led" onclick="window.location='/upload.html';" value="Uploader">Uploader</button>
+        <script src="/scripts.js "></script>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset=utf-8>
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+<title>ESP32 Robot Car</title>
+<style type="text/css">
+div#main {
+	font: 14pt/12pt sans-serif;
+	text-align: center;
+	max-width: 1000px;
+	height: auto;
+	width: 35em;
+	margin: 1em auto 0;
+}
+@media (max-width: 1024px) {
+  div#main {
+    width: 100%;
+    height: auto;
+    }
+}
+@media (max-width: 768px) {
+  div#main {
+    width: 100%;
+    height: auto;
+  }
+}
+@media (max-width: 480px) {
+  div#main {
+    width: 100%;
+    height: auto;
+  }
+}
+@media (max-width: 320px) {
+  div#main {
+    width: 100%;
+    height: auto;
+  }
+}
+</style></head>
+<body>
+<div id="main">
+<p>Please upload firmware image *.bin file<p>
+<input id="newbinfile" type="file" onchange="setFName(this)">
+<button id="uploadbin" type="button" onclick="upload(this)">Update</button>
+<p>Please upload html file<p>
+<input id="newhtmlfile" type="file" onchange="setFName(this)">
+<button id="uploadhtml" type="button" onclick="upload(this)">Upload</button>
+<p><a href="/index.html">Return to begin</a></p>
+<br /><br />
+<span id="uploading"></span>
+</div>
+<script src="/scripts.js "></script>
+</body>
+</html>
