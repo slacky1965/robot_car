@@ -206,9 +206,9 @@ static void steering_task(void *pvParameter) {
     if (driver_car->steering->current_position != *degree) {
         vTaskDelay(30/portTICK_PERIOD_MS);
         driver_car->steering->current_position = *degree;
-        ESP_LOGI(TAG, "Steering position - %d", driver_car->steering->current_position);
     }
 
+    ESP_LOGI(TAG, "Steering position - %d", driver_car->steering->current_position);
 
     mcpwm_set_signal_low(driver_car->steering->mcpwm.unit, driver_car->steering->mcpwm.timer, driver_car->steering->mcpwm.gen);
 
