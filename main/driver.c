@@ -43,19 +43,27 @@
 #define SPEEDUP_STEP        100
 
 /*
- *  cmd_no command -         no command
- *  cmd_turn_left command -  smooth left turn
- *  cmd_turn_right command - smooth right turn
- *  cmd_turn_stop command -  stop further turning the steering wheel
- *  cmd_speedup command -    smooth increase in speed
- *  cmd_slowdown command -   smooth decrease in speed
- *  cmd_speedstop command -  stop changing speed
- *  cmd_forward command -    if back - smooth decrease in speed
- *                           if forward - smooth increase in speed
- *                           if left or right - straight
- *  cmd_back command -       if forwward - smooth decrease in speed
- *                           if back - smooth increase in speed
- *                           if left or right - straight
+ *      cmd_no command -         no command
+ *
+ *      cmd_turn_left command -  smooth left turn
+ *
+ *      cmd_turn_right command - smooth right turn
+ *
+ *      cmd_turn_stop command -  stop further turning the steering wheel
+ *
+ *      cmd_speedup command -    smooth increase in speed
+ *
+ *      cmd_slowdown command -   smooth decrease in speed
+ *
+ *      cmd_speedstop command -  stop changing speed
+ *
+ *      cmd_forward command -    if back - smooth decrease in speed
+ *                               if forward - smooth increase in speed
+ *                               if left or right - straight
+ *
+ *      cmd_back command -       if forward - smooth decrease in speed
+ *                               if back - smooth increase in speed
+ *                               if left or right - straight
  *
  */
 enum {
@@ -74,7 +82,9 @@ enum {
  *  rear wheel drive status
  *
  *      motors_stop status -    the motors are stopped
+ *
  *      motors_forward status - motors forward
+ *
  *      motors_back status -    motors back
  *
  */
