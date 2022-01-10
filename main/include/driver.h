@@ -1,8 +1,6 @@
 #ifndef MAIN_INCLUDE_DRIVER_H_
 #define MAIN_INCLUDE_DRIVER_H_
 
-#include "global.h"
-
 esp_err_t init_driver();
 void deinit_driver();
 

@@ -12,6 +12,9 @@
 #include "driver.h"
 #include "pulse.h"
 
+#define LOW                 0
+#define HIGH                1
+
 #define ANGLE_MIN           0
 #define ANGLE_MAX           180
 #define STEERING_ANGLE_MIN  45              /* 90 -> 45  left turn                  */

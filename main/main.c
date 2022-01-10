@@ -45,12 +45,12 @@ void app_main(void) {
     init_spiffs();
 //    init_usonic();
     init_driver();
-    init_driver();
+//    init_driver();
     init_pulse();
-    init_pulse();
+//    init_pulse();
     vTaskDelay(5000/portTICK_PERIOD_MS);
-    deinit_pulse();
-    deinit_driver();
+//    deinit_pulse();
+//    deinit_driver();
     int16_t distance = -1;
 
     for (;;) {

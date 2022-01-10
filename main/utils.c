@@ -7,15 +7,16 @@ static const char *TAG = "robot_car_utils";
 
 static bool spiffs;
 
-bool get_status_spiffs() {
-    return spiffs;
-}
-
 static esp_vfs_spiffs_conf_t conf = {
         .base_path = MOUNT_POINT_SPIFFS,
         .partition_label = NULL,
         .max_files = 5,
-        .format_if_mount_failed = false };
+        .format_if_mount_failed = false
+};
+
+bool get_status_spiffs() {
+    return spiffs;
+}
 
 void init_spiffs() {
 

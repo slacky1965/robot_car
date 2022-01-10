@@ -7,6 +7,9 @@
 
 #include "usonic.h"
 
+#define LOW             0
+#define HIGH            1
+
 /* defined pin for ultrasonic HC-SR04 */
 #define TRIG_PIN        13
 #define ECHO_PIN        12
