@@ -819,9 +819,8 @@ esp_err_t init_driver() {
 
 void deinit_driver() {
 
-    ESP_LOGI(TAG, "Deinitialize driver");
-
     if (driver_car) {
+        ESP_LOGI(TAG, "Deinitialize driver");
         if (driver_car->steering) {
             delete_steering_servo(driver_car->steering);
         }
@@ -832,6 +831,8 @@ void deinit_driver() {
         vQueueDelete(driver_car->queue_driver);
         free(driver_car);
         driver_car = NULL;
+    } else {
+        ESP_LOGE(TAG, "No driver was initialized.");
     }
 
 }
