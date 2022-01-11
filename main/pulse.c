@@ -106,9 +106,6 @@ static speed_sensor_side_t *create_sensor_side(int pin, uint8_t pcnt_unit, uint8
 
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Error set pcnt config. (%s:%u)", __FILE__, __LINE__);
-        sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
-        sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
-        pcnt_unit_config(&(sensor->pcnt_config));
         gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         free(sensor);
         return NULL;
@@ -118,9 +115,6 @@ static speed_sensor_side_t *create_sensor_side(int pin, uint8_t pcnt_unit, uint8
 
     if (!sensor->queue) {
         ESP_LOGE(TAG, "Create queue failed. (%s:%u)", __FILE__, __LINE__);
-        sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
-        sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
-        pcnt_unit_config(&(sensor->pcnt_config));
         gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         free(sensor);
         return NULL;
@@ -130,9 +124,6 @@ static speed_sensor_side_t *create_sensor_side(int pin, uint8_t pcnt_unit, uint8
     xTaskCreate(&pulse_task, task_name, 2048, sensor, 5, &(sensor->handler));
     if (!sensor->handler) {
         ESP_LOGE(TAG, "Create task \"%s\" failed. (%s:%u)", task_name, __FILE__, __LINE__);
-        sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
-        sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
-        pcnt_unit_config(&(sensor->pcnt_config));
         gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         vQueueDelete(sensor->queue);
         free(sensor);
@@ -160,9 +151,6 @@ static void delete_sensor_side(speed_sensor_side_t *sensor) {
     vTaskDelete(sensor->handler);
     vQueueDelete(sensor->queue);
     pcnt_isr_handler_remove(sensor->pcnt_config.unit);
-    sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
-    sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
-    pcnt_unit_config(&(sensor->pcnt_config));
     gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
 
     free(sensor);
@@ -213,6 +201,7 @@ esp_err_t init_pulse() {
     if (sensor_side == NULL) {
         ESP_LOGE(TAG, "Right speed sensor not created. (%s:%u)", __FILE__, __LINE__);
         delete_sensor_side(sensor->sensor_left);
+        pcnt_isr_service_uninstall();
         free(sensor);
         return ret;
     }
