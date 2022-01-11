@@ -43,7 +43,7 @@ void app_main(void) {
 //    startWiFiAP();
 
     init_spiffs();
-//    init_usonic();
+    init_usonic();
     init_driver();
 //    init_driver();
     init_pulse();

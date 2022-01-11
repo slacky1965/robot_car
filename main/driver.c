@@ -296,6 +296,7 @@ static void speed_correction_task(void *pvParameter) {
                             set_driver_pwm_us(&(motors->motor_left.pwm_speed),
                                                 motors->motor_left.value_speed-(motors->motor_left.correction_speed));
                         }
+                        printf("left_speed_time - %lld,  right_speed_time - %lld\n", speed_left, speed_right);
                     }
                 } else if (speed_left < speed_right) {
                     /* percentage difference */
@@ -311,13 +312,13 @@ static void speed_correction_task(void *pvParameter) {
                                                 motors->motor_right.value_speed-(motors->motor_right.correction_speed));
 
                         }
+                        printf("left_speed_time - %lld,  right_speed_time - %lld\n", speed_left, speed_right);
                     }
                 }
 //                if (speed_correction_need(speed_left, speed_right)) {
 //                }
             }
 
-            printf("left_speed_time - %lld,  right_speed_time - %lld\n", speed_left, speed_right);
         }
 
 
