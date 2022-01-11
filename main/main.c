@@ -51,18 +51,19 @@ void app_main(void) {
     vTaskDelay(5000/portTICK_PERIOD_MS);
 //    deinit_pulse();
 //    deinit_driver();
+//    deinit_usonic();
     int16_t distance = -1;
 
     for (;;) {
 
-//        distance = get_distance();
+        distance = get_distance();
 
         if (distance != -1) {
             printf("distance - %d cm\n", distance);
         }
 
 //        printf("Free memory: %d bytes\n", esp_get_free_heap_size());
-        vTaskDelay(5000/portTICK_PERIOD_MS);
+        vTaskDelay(1000/portTICK_PERIOD_MS);
     }
 
 }

@@ -11,24 +11,39 @@
 #define HIGH            1
 
 /* defined pin for ultrasonic HC-SR04 */
-#define TRIG_PIN        13
-#define ECHO_PIN        12
-#define BUFF_SIZE       0x8
-#define ROUNDUP         58
-
+#define TRIG_GPIO       GPIO_NUM_13
+#define ECHO_GPIO       GPIO_NUM_12
+#define TRIG_LOW_DELAY  4
+#define TRIG_HIGH_DELAY 10
+#define BUFF_SIZE       8
 #define ECHO_TIMEOUT    10000
 #define TIME_MEASURE    50000
+#define ROUNDUP         58
 
 static char *TAG = "robot_car_usonic";
 
-static uint64_t echo_resp_time[BUFF_SIZE] = {[0 ... BUFF_SIZE-1] = 0xffff};
+typedef struct {
+    int trig_gpio;
+    int echo_gpio;
+    uint32_t trig_low_delay;
+    uint32_t trig_high_delay;
+    uint64_t echo_resp_time[BUFF_SIZE];
+    TaskHandle_t handler_usonic_task;
+} usonic_t;
+
+static usonic_t *usonic = NULL;
 
 /* return distance in ~ñm */
 int16_t get_distance() {
     uint64_t value = 0;
 
+    if (usonic == NULL) {
+        ESP_LOGE(TAG, "No ultrasonic device created. (%s:%d)", __FILE__, __LINE__);
+        return -1;
+    }
+
     for(int i = 0; i < BUFF_SIZE; i++) {
-        value += echo_resp_time[i];
+        value += usonic->echo_resp_time[i];
     }
 
     value = (value / BUFF_SIZE) & 0xffff;
@@ -45,70 +60,146 @@ static void usonic_task(void *param) {
 
     uint64_t start, finish;
 
+    usonic_t *sonic = (usonic_t*)param;
+
     int level;
     uint8_t count = 0;
+    bool set_dist;
 
     while(1) {
-        /* impulse of 10 us */
-        gpio_set_level(TRIG_PIN, HIGH);
-        ets_delay_us(10);
-        gpio_set_level(TRIG_PIN, LOW);
 
-        if (gpio_get_level(ECHO_PIN)) {
+        gpio_set_level(sonic->trig_gpio, LOW);
+        ets_delay_us(sonic->trig_low_delay);
+        /* impulse of 10 us */
+        gpio_set_level(sonic->trig_gpio, HIGH);
+        ets_delay_us(sonic->trig_high_delay);
+        gpio_set_level(sonic->trig_gpio, LOW);
+
+        if (gpio_get_level(sonic->echo_gpio)) {
             vTaskDelay(50/portTICK_PERIOD_MS);
             continue;
         }
 
+        set_dist = false;
         /* read distance in us */
         for(int i = 0; i < ECHO_TIMEOUT; i++) {
-            level = gpio_get_level(ECHO_PIN);
+            level = gpio_get_level(sonic->echo_gpio);
             if (level) {
                 start = esp_timer_get_time();
                 for(uint16_t i = 0; i < TIME_MEASURE && level; i++) {
-                    level = gpio_get_level(ECHO_PIN);
+                    level = gpio_get_level(sonic->echo_gpio);
                 }
                 finish = esp_timer_get_time();
-                echo_resp_time[count] = finish - start;
-                count = (count + 1)&(BUFF_SIZE-1);
+                sonic->echo_resp_time[count++&(BUFF_SIZE-1)] = finish - start;
+                set_dist = true;
                 break;
             }
+        }
+
+        if (!set_dist) {
+            sonic->echo_resp_time[count++&(BUFF_SIZE-1)] = -1;
         }
         vTaskDelay(20/portTICK_PERIOD_MS);
     }
 }
 
+static usonic_t *create_usonic() {
+
+    usonic_t *sonic = NULL;
+
+    sonic = malloc(sizeof(usonic_t));
+
+    if (sonic == NULL) {
+        ESP_LOGE(TAG, "Error allocation memory. (%s:%u)", __FILE__, __LINE__);
+        return NULL;
+    }
+
+    sonic->trig_gpio = TRIG_GPIO;
+    sonic->echo_gpio = ECHO_GPIO;
+
+    sonic->trig_low_delay = TRIG_LOW_DELAY;
+    sonic->trig_high_delay = TRIG_HIGH_DELAY;
+
+    memset(&(sonic->echo_resp_time), -1, sizeof(uint64_t)*BUFF_SIZE);
+
+    xTaskCreate(&usonic_task, "usonic_task", 2048, sonic, 0, &(sonic->handler_usonic_task));
+    if (!sonic->handler_usonic_task) {
+        ESP_LOGE(TAG, "Create ultrasonic task failed. (%s:%u)", __FILE__, __LINE__);
+        free(sonic);
+        return NULL;
+    }
+
+    ESP_LOGI(TAG, "Ultrasonic device created");
+
+    return sonic;
+}
+
+static void delete_usonic(usonic_t *sonic) {
+
+    if (sonic) {
+        gpio_reset_pin(sonic->trig_gpio);
+        gpio_reset_pin(sonic->echo_gpio);
+        vTaskDelete(sonic->handler_usonic_task);
+        free(sonic);
+        ESP_LOGI(TAG, "Ultrasonic device deleted.");
+    } else {
+        ESP_LOGE(TAG, "No ultrasonic device was created, nothing deleted.");
+    }
+
+}
+
 esp_err_t init_usonic() {
 
-    esp_err_t ret;
-    const int trig_gpio = TRIG_PIN;
-    const int echo_gpio = ECHO_PIN;
-    TaskHandle_t handler;
+    esp_err_t ret = ESP_FAIL;
+    usonic_t *sonic;
 
     ESP_LOGI(TAG, "Initialize ultrasonic");
 
-    /* Configure gpio for trigger's output of HC-SR04 */
-    ret = gpio_set_direction(trig_gpio, GPIO_MODE_OUTPUT);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Gpio %d set failure. (%s:%u)", trig_gpio, __FILE__, __LINE__);
+    sonic = create_usonic();
+
+    if (sonic == NULL) {
+        ESP_LOGE(TAG, "Create ultrasonic device failed. (%s:%u)", __FILE__, __LINE__);
+        ESP_LOGE(TAG, "Could not init ultrasonic. (%s:%u)", __FILE__, __LINE__);
         return ret;
     }
 
-    gpio_set_level(trig_gpio, LOW);
+    gpio_reset_pin(sonic->trig_gpio);
+    gpio_reset_pin(sonic->echo_gpio);
+
+    /* Configure gpio for trigger's output of HC-SR04 */
+    ret = gpio_set_direction(sonic->trig_gpio, GPIO_MODE_OUTPUT);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Trigger GPIO_NUM%d set failure. (%s:%u)", sonic->trig_gpio, __FILE__, __LINE__);
+        ESP_LOGE(TAG, "Could not init ultrasonic. (%s:%u)", __FILE__, __LINE__);
+        delete_usonic(sonic);
+        return ret;
+    }
+
+    gpio_set_level(sonic->trig_gpio, LOW);
 
     /* Configure gpio for echo's input of HC-SR04 */
-    ret = gpio_set_direction(echo_gpio, GPIO_MODE_INPUT);
+    ret = gpio_set_direction(sonic->echo_gpio, GPIO_MODE_INPUT);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Gpio %d set failure. (%s:%u)", echo_gpio, __FILE__, __LINE__);
+        ESP_LOGE(TAG, "Echo GPIO_NUM%d set failure. (%s:%u)", sonic->echo_gpio, __FILE__, __LINE__);
+        ESP_LOGE(TAG, "Could not init ultrasonic. (%s:%u)", __FILE__, __LINE__);
+        delete_usonic(sonic);
         return ret;
-    }
-
-    xTaskCreate(&usonic_task, "usonic_task", 2048, NULL, 0, &handler);
-    if (!handler) {
-        ESP_LOGE(TAG, "Create task failed. (%s:%u)", __FILE__, __LINE__);
-        return ESP_FAIL;
     }
 
     vTaskDelay(200/portTICK_PERIOD_MS);
 
+    usonic = sonic;
+
     return ESP_OK;
+}
+
+void deinit_usonic() {
+
+    if (usonic) {
+        ESP_LOGI(TAG, "Deinitialize ultrasonic");
+        delete_usonic(usonic);
+        usonic = NULL;
+    } else {
+        ESP_LOGE(TAG, "Ultrasonic was not initialized");
+    }
 }

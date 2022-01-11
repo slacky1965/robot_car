@@ -109,6 +109,7 @@ static speed_sensor_side_t *create_sensor_side(int pin, uint8_t pcnt_unit, uint8
         sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
         sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
         pcnt_unit_config(&(sensor->pcnt_config));
+        gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         free(sensor);
         return NULL;
     }
@@ -120,6 +121,7 @@ static speed_sensor_side_t *create_sensor_side(int pin, uint8_t pcnt_unit, uint8
         sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
         sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
         pcnt_unit_config(&(sensor->pcnt_config));
+        gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         free(sensor);
         return NULL;
     }
@@ -131,6 +133,7 @@ static speed_sensor_side_t *create_sensor_side(int pin, uint8_t pcnt_unit, uint8
         sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
         sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
         pcnt_unit_config(&(sensor->pcnt_config));
+        gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         vQueueDelete(sensor->queue);
         free(sensor);
         return NULL;
@@ -160,6 +163,7 @@ static void delete_sensor_side(speed_sensor_side_t *sensor) {
     sensor->pcnt_config.pulse_gpio_num = PCNT_PIN_NOT_USED;
     sensor->pcnt_config.ctrl_gpio_num = PCNT_PIN_NOT_USED;
     pcnt_unit_config(&(sensor->pcnt_config));
+    gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
 
     free(sensor);
 

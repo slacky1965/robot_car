@@ -498,6 +498,7 @@ static esp_err_t delete_steering_servo(servomotor_t *steering) {
 
     if (steering) {
         mcpwm_stop(steering->mcpwm.unit, steering->mcpwm.timer);
+        gpio_reset_pin(steering->mcpwm.gpio_num);
         free(steering);
         steering = NULL;
         ESP_LOGI(TAG, "Servo device steering deleted.");
@@ -593,7 +594,14 @@ static void delete_motors(motors_t *motors) {
         set_motors(motors);
         mcpwm_stop(motors->motor_left.pwm_speed.unit, motors->motor_left.pwm_speed.timer);
         mcpwm_stop(motors->motor_right.pwm_speed.unit, motors->motor_right.pwm_speed.timer);
-        vTaskDelay(200/portTICK_PERIOD_MS);
+        vTaskDelay(100/portTICK_PERIOD_MS);
+        gpio_reset_pin(motors->motor_left.gpio_motor_plus);
+        gpio_reset_pin(motors->motor_left.gpio_motor_minus);
+        gpio_reset_pin(motors->motor_left.pwm_speed.gpio_num);
+        gpio_reset_pin(motors->motor_right.gpio_motor_plus);
+        gpio_reset_pin(motors->motor_right.gpio_motor_minus);
+        gpio_reset_pin(motors->motor_right.pwm_speed.gpio_num);
+        vTaskDelay(100/portTICK_PERIOD_MS);
         free(motors);
         motors = NULL;
         ESP_LOGI(TAG, "Motors device deleted.");
