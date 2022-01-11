@@ -155,6 +155,12 @@ esp_err_t init_usonic() {
 
     ESP_LOGI(TAG, "Initialize ultrasonic");
 
+    if (usonic) {
+        ESP_LOGE(TAG, "Ultrasonic device already exist");
+        return ret;
+    }
+
+
     sonic = create_usonic();
 
     if (sonic == NULL) {

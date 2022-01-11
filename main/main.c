@@ -45,18 +45,20 @@ void app_main(void) {
     init_spiffs();
     init_usonic();
     init_driver();
-//    init_driver();
+    init_driver();
     init_pulse();
-//    init_pulse();
+    init_pulse();
+    init_usonic();
     vTaskDelay(5000/portTICK_PERIOD_MS);
-//    deinit_pulse();
-//    deinit_driver();
-//    deinit_usonic();
+    deinit_pulse();
+    deinit_driver();
+    deinit_driver();
+    deinit_usonic();
     int16_t distance = -1;
 
     for (;;) {
 
-        distance = get_distance();
+//        distance = get_distance();
 
         if (distance != -1) {
             printf("distance - %d cm\n", distance);
