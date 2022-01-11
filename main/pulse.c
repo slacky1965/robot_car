@@ -124,8 +124,8 @@ static speed_sensor_side_t *create_sensor_side(int pin, uint8_t pcnt_unit, uint8
     xTaskCreate(&pulse_task, task_name, 2048, sensor, 5, &(sensor->handler));
     if (!sensor->handler) {
         ESP_LOGE(TAG, "Create task \"%s\" failed. (%s:%u)", task_name, __FILE__, __LINE__);
-        gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         vQueueDelete(sensor->queue);
+        gpio_reset_pin(sensor->pcnt_config.pulse_gpio_num);
         free(sensor);
         return NULL;
     }
