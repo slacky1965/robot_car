@@ -1071,13 +1071,13 @@ cJSON *get_status_car() {
 
     if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
-        cJSON_AddNumberToObject(status_root, forward_key, LOW);
-        cJSON_AddNumberToObject(status_root, back_key, LOW);
-        cJSON_AddNumberToObject(status_root, stop_key, LOW);
-        cJSON_AddNumberToObject(status_root, auto_key, LOW);
-        cJSON_AddNumberToObject(status_root, speed_key, LOW);
-        cJSON_AddNumberToObject(status_root, speed_l_key, LOW);
-        cJSON_AddNumberToObject(status_root, speed_r_key, LOW);
+        cJSON_AddFalseToObject(status_root, forward_key);
+        cJSON_AddFalseToObject(status_root, back_key);
+        cJSON_AddFalseToObject(status_root, stop_key);
+        cJSON_AddFalseToObject(status_root, auto_key);
+        cJSON_AddNumberToObject(status_root, speed_key, 0);
+        cJSON_AddNumberToObject(status_root, speed_l_key, 0);
+        cJSON_AddNumberToObject(status_root, speed_r_key, 0);
         cJSON_AddNumberToObject(status_root, turn_key, STEERING_STRAIGHT);
     } else {
         left_speed =  map(driver_car->motors->motor_left.new_value_speed, VAL_SPEED_MIN, VAL_SPEED_MAX, SPEED_MIN, SPEED_MAX);
