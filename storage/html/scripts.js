@@ -167,6 +167,7 @@ function set_auto(autoOn, stop) {
             id_speed.disabled = true;
             id_left.disabled    = true;
             id_right.disabled   = true;
+            id_stop.disabled    = true;
         }
     }
 }
