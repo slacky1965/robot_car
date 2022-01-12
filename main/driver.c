@@ -850,10 +850,12 @@ void automatic_car(bool automatic) {
 
     if (automatic) {
         ESP_LOGI(TAG, "Automatic mode on");
+        stop_motors(driver_car->motors);
+        straight_motors(driver_car->motors);
         driver_car->motors->status = car_auto;
     } else {
         ESP_LOGI(TAG, "Automatic mode off");
-        driver_car->motors->status = car_stop;
+        stop_motors(driver_car->motors);
     }
 }
 
