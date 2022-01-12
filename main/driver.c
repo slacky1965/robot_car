@@ -81,19 +81,19 @@ enum {
 /*
  *  rear wheel drive status
  *
- *      motors_stop status -    the motors are stopped
+ *      car_stop status -    the motors are stopped
  *
- *      motors_forward status - motors forward
+ *      car_forward status - motors forward
  *
- *      motors_back status -    motors back
+ *      car_back status -    motors back
  *
  */
 typedef enum {
-    motors_stop =    0b00000001,
-    motors_forward = 0b00000010,
-    motors_back =    0b00000100,
-    motors_auto =    0b00001000
-} motors_status_t;
+    car_stop =    0b00000001,
+    car_forward = 0b00000010,
+    car_back =    0b00000100,
+    car_auto =    0b00001000
+} car_status_t;
 
 typedef struct {
     int                 gpio_num;
@@ -133,7 +133,7 @@ typedef struct {
     uint32_t        duty_min_us;
     uint32_t        duty_max_us;
     int16_t         turn;
-    motors_status_t status;
+    car_status_t status;
     TaskHandle_t    handler_speed_correction_task;
 } motors_t;
 
@@ -277,7 +277,7 @@ static void speed_correction_task(void *pvParameter) {
 
     while(1) {
 
-        if (motors->turn == STEERING_STRAIGHT && !(motors->status & motors_stop)) {
+        if (motors->turn == STEERING_STRAIGHT && !(motors->status & car_stop)) {
 
             get_speed_time(&speed_left, &speed_right);
 
@@ -524,7 +524,7 @@ static motors_t *create_motors() {
 
     memset(motors, 0, sizeof(motors_t));
     motors->turn =                            STEERING_STRAIGHT;
-    motors->status =                          motors_stop;
+    motors->status =                          car_stop;
     motors->duty_min_us =                     VAL_SPEED_MIN;
     motors->duty_max_us =                     VAL_SPEED_MAX;
 
@@ -647,16 +647,16 @@ static void forward_motors(motors_t *motors) {
     int16_t speed = 0;
     bool speed_change = false;
 
-    if (motors->status & motors_stop) {
+    if (motors->status & car_stop) {
         motors->motor_left.value_motor_plus = HIGH;
         motors->motor_left.value_motor_minus = LOW;
         motors->motor_right.value_motor_plus = HIGH;
         motors->motor_right.value_motor_minus = LOW;
         set_motors(motors);
-        motors->status = motors_forward;
+        motors->status = car_forward;
         speed_change = true;
     } else {
-        if (motors->turn != STEERING_STRAIGHT && !(motors->status & motors_back)) {
+        if (motors->turn != STEERING_STRAIGHT && !(motors->status & car_back)) {
             speed_change = false;
         } else {
             speed_change = true;
@@ -666,7 +666,7 @@ static void forward_motors(motors_t *motors) {
     straight_motors(motors);
 
     if (speed_change) {
-        if (motors->status & motors_forward) {
+        if (motors->status & car_forward) {
             speed = cmd_speedup;
             if (xQueueSendToBack(driver_car->queue_driver, &speed, (TickType_t)10) != pdPASS) {
                 ESP_LOGE(TAG, "Not put to queue motors cmd \"cmd_speedup\", command failed. (%s:%u)", __FILE__, __LINE__);
@@ -685,16 +685,16 @@ static void back_motors(motors_t *motors) {
     int16_t speed = 0;
     bool speed_change = false;
 
-    if (motors->status & motors_stop) {
+    if (motors->status & car_stop) {
         motors->motor_left.value_motor_plus = LOW;
         motors->motor_left.value_motor_minus = HIGH;
         motors->motor_right.value_motor_plus = LOW;
         motors->motor_right.value_motor_minus = HIGH;
         set_motors(motors);
-        motors->status = motors_back;
+        motors->status = car_back;
         speed_change = true;
     } else {
-        if (motors->turn != STEERING_STRAIGHT && !(motors->status & motors_forward)) {
+        if (motors->turn != STEERING_STRAIGHT && !(motors->status & car_forward)) {
             speed_change = false;
         } else {
             speed_change = true;
@@ -704,7 +704,7 @@ static void back_motors(motors_t *motors) {
     straight_motors(motors);
 
     if (speed_change) {
-        if (!(motors->status & motors_forward)) {
+        if (!(motors->status & car_forward)) {
             speed = cmd_speedup;
             if (xQueueSendToBack(driver_car->queue_driver, &speed, (TickType_t)50) != pdPASS) {
                 ESP_LOGE(TAG, "Not put to queue motors cmd \"cmd_speedup\", command failed. (%s:%u)", __FILE__, __LINE__);
@@ -728,7 +728,7 @@ static void stop_motors(motors_t *motors) {
     motors->motor_right.new_value_speed = motors->motor_right.value_speed = VAL_SPEED_MIN;
 
     set_motors(motors);
-    motors->status = motors_stop;
+    motors->status = car_stop;
 
 }
 
@@ -850,10 +850,10 @@ void automatic_car(bool automatic) {
 
     if (automatic) {
         ESP_LOGI(TAG, "Automatic mode on");
-        driver_car->motors->status = motors_auto;
+        driver_car->motors->status = car_auto;
     } else {
         ESP_LOGI(TAG, "Automatic mode off");
-        driver_car->motors->status = motors_stop;
+        driver_car->motors->status = car_stop;
     }
 }
 
@@ -884,7 +884,7 @@ void turn_right_car() {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
@@ -905,7 +905,7 @@ void turn_stop_car() {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
@@ -924,7 +924,7 @@ void forward_start_car() {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
@@ -943,7 +943,7 @@ void forward_stop_car() {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
@@ -962,7 +962,7 @@ void back_start_car() {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
@@ -981,7 +981,7 @@ void back_stop_car() {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
@@ -1000,7 +1000,7 @@ void stop_car() {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
@@ -1016,12 +1016,12 @@ void set_speed_car(int16_t speed) {
         return;
     }
 
-    if (driver_car->motors->status & motors_auto) {
+    if (driver_car->motors->status & car_auto) {
         ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
 
-    if (driver_car->motors->status & motors_stop ) return;
+    if (driver_car->motors->status & car_stop ) return;
 
     if (speed < SPEED_MIN) speed = SPEED_MIN;
     if (speed > SPEED_MAX) speed = SPEED_MAX;
@@ -1086,17 +1086,17 @@ cJSON *get_status_car() {
         if (left_speed > right_speed) speed = left_speed;
         else speed = right_speed;
 
-        if (driver_car->motors->status & motors_forward) {
+        if (driver_car->motors->status & car_forward) {
             cJSON_AddTrueToObject(status_root, forward_key);
             cJSON_AddFalseToObject(status_root, back_key);
             cJSON_AddFalseToObject(status_root, stop_key);
             cJSON_AddFalseToObject(status_root, auto_key);
-        } else if (driver_car->motors->status & motors_back) {
+        } else if (driver_car->motors->status & car_back) {
             cJSON_AddFalseToObject(status_root, forward_key);
             cJSON_AddTrueToObject(status_root, back_key);
             cJSON_AddFalseToObject(status_root, stop_key);
             cJSON_AddFalseToObject(status_root, auto_key);
-        } else if (driver_car->motors->status & motors_auto) {
+        } else if (driver_car->motors->status & car_auto) {
             cJSON_AddFalseToObject(status_root, forward_key);
             cJSON_AddFalseToObject(status_root, back_key);
             cJSON_AddFalseToObject(status_root, stop_key);
