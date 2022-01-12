@@ -44,20 +44,17 @@ function set_auto(args) {
 
 function print_speed_script(shift) {
     
-    var value_speed = document.getElementById("val_speed");
     var slider = document.getElementById("speed");
     
     if (accelerator) {
+        slider.value = speed_script;
+        print_speed(speed_script);
         if (shift) {
-            slider.value = speed_script;
-            value_speed.innerHTML = speed_script;
             speed_script += 2;
             if (speed_script > 255) {
                 speed_script = 255;
             }
         } else {
-            slider.value = speed_script;
-            value_speed.innerHTML = speed_script;
             speed_script -= 2;
             if (speed_script < 1) {
                 speed_script = 1;
@@ -71,9 +68,9 @@ function print_speed_script(shift) {
 }
 
 function print_speed (speed) {
-    var output = document.getElementById("val_speed");
-    if (output) {
-        output.innerHTML = speed;
+    var value_speed = document.getElementById("val_speed");
+    if (value_speed) {
+        value_speed.innerHTML = speed;
     }
 }
 
