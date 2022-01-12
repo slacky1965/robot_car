@@ -1,8 +1,9 @@
 
 var speed_car = 0;
 var speed_script = speed_car;
-var print_speedup = false;
-var print_slowdown = false;
+var speedup = true;
+var slowdown = false;
+var accelerator = false;
 var forward = false;
 var back = false;
 var stop = true;
@@ -11,48 +12,53 @@ var command_stop = false;
 var auto = false;
 
 function set_auto(args) {
-    var str_auto = document.getElementById("auto");
+    var str_auto   = document.getElementById("auto");
+    var id_speed   = document.getElementById("speed");
+    var id_forward = document.getElementById("btn_forward");
+    var id_left    = document.getElementById("btn_left");
+    var id_stop    = document.getElementById("btn_stop");
+    var id_right   = document.getElementById("btn_right");
+    var id_back    = document.getElementById("btn_back");
     if (str_auto) {
-        console.log("set_auto "+args);
         if (args) {
             auto = true;
-            str_auto.innerHTML = "Auto On";
-        } else {
+            str_auto.innerHTML  = "Auto On";
+            id_speed.disabled   = true;
+            id_forward.disabled = true;
+            id_left.disabled    = true;
+            id_stop.disabled    = true;
+            id_right.disabled   = true;
+            id_back.disabled    = true;
+    } else {
             auto = false;
-            str_auto.innerHTML = "Auto Off";
+            str_auto.innerHTML  = "Auto Off";
+            id_speed.disabled   = false;
+            id_forward.disabled = false;
+            id_left.disabled    = false;
+            id_stop.disabled    = false;
+            id_right.disabled   = false;
+            id_back.disabled    = false;
         }
     }
 }
 
-function print_speedup_script() {
-
-    if (print_speedup) {
-        var output = document.getElementById("val_speed");
-        if (output) {
-            var slider = document.getElementById("speed");
+function print_speed_script(shift) {
+    
+    var value_speed = document.getElementById("val_speed");
+    var slider = document.getElementById("speed");
+    
+    if (accelerator) {
+        if (shift) {
             slider.value = speed_script;
-            output.innerHTML = speed_script++;
-            speed_script++;
+            value_speed.innerHTML = speed_script;
+            speed_script += 2;
             if (speed_script > 255) {
                 speed_script = 255;
             }
-        }
-    } else {
-        return;
-    }
-    
-    setTimeout(print_speedup_script, 5);
-}   
-
-function print_slowdown_script() {
-
-    if (print_slowdown) {
-        var output = document.getElementById("val_speed");
-        if (output) {
-            var slider = document.getElementById("speed");
+        } else {
             slider.value = speed_script;
-            output.innerHTML = speed_script--;
-            speed_script--;
+            value_speed.innerHTML = speed_script;
+            speed_script -= 2;
             if (speed_script < 1) {
                 speed_script = 1;
             }
@@ -61,8 +67,8 @@ function print_slowdown_script() {
         return;
     }
     
-    setTimeout(print_slowdown_script, 5);
-}   
+    setTimeout(print_speed_script, 5, shift);
+}
 
 function print_speed (speed) {
     var output = document.getElementById("val_speed");
@@ -77,52 +83,46 @@ async function command_car(command, val) {
         value:   val
     };
     
-    console.log("Enter command - "+command);
-    
     if (command == "forward_start") {
         command_stop = false;
         if (stop) {
             stop = false;
-            print_speedup = true;
-            print_speedup_script();
+            accelerator = true;
+            print_speed_script(speedup);
         } else if (back == false) {
             if (turn == 90) {
-                print_speedup = true;
-                print_speedup_script();
+                accelerator = true;
+                print_speed_script(speedup);
             }
         } else {
-            print_slowdown = true;
-            print_slowdown_script()
+            accelerator = true;
+            print_speed_script(slowdown);
         }        
     } else if (command == "back_start") {
         command_stop = false;
         if (stop) {
             stop = false;
-            print_speedup = true;
-            print_speedup_script();
+            accelerator = true;
+            print_speed_script(speedup);
         } else if (forward == false) {
             if (turn == 90) {
-                print_speedup = true;
-                print_speedup_script();
+                accelerator = true;
+                print_speed_script(speedup);
             }
         } else {
-            print_slowdown = true;
-            print_slowdown_script()
+            accelerator = true;
+            print_speed_script(slowdown);
         }
     } else if (command == "left_start") {
         command_stop = false;
     } else if (command == "right_start") {
         command_stop = false;
     } else if (command == "forward_stop") {
-        print_speedup = false; 
-        print_slowdown = false;
+        accelerator = false;
     } else if (command == "back_stop") {
-        print_speedup = false; 
-        print_slowdown = false;
+        accelerator = false;
     } else if (command == "stop") {
-        print_speedup = false; 
-        print_slowdown = false;
-        stop = true;
+        accelerator = false;
     } else if (command == "auto") {
         str.value = !auto;
     }
@@ -159,8 +159,6 @@ async function command_car(command, val) {
             } else if (command == "auto") {
                 get_status();
             }
-            
-            console.log("Return command from server - "+data.command);
         } else {
             var error = await response.text();
             var message = `${error}. HTTP error ${response.status}.`;
@@ -179,12 +177,12 @@ async function get_status() {
         var response = await fetch("car_status");
         if (response.ok) {
             var data = await response.json();
+            console.log(data);
             forward = data.forward;
             back = data.back;
             turn = data.turn;
             stop = data.stop;
             auto = data.auto;
-            console.log("get_status auto "+auto);
             set_auto(auto);
             speed_car = data.speed;
             speed_script = speed_car;
@@ -264,8 +262,5 @@ async function upload(elem) {
 }
 
 get_status();
-//set_auto(false);
-//print_speedup_script();
-//print_slowdown_script();
 
 
