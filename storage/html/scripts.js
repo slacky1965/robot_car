@@ -11,79 +11,18 @@ var turn = 90;
 var command_stop = false;
 var auto = false;
 
-function set_auto(args) {
-    var str_auto   = document.getElementById("auto");
-    var id_speed   = document.getElementById("speed");
-    var id_forward = document.getElementById("btn_forward");
-    var id_left    = document.getElementById("btn_left");
-    var id_stop    = document.getElementById("btn_stop");
-    var id_right   = document.getElementById("btn_right");
-    var id_back    = document.getElementById("btn_back");
-    if (str_auto) {
-        if (args) {
-            auto = true;
-            str_auto.innerHTML  = "Auto On";
-            id_speed.disabled   = true;
-            id_forward.disabled = true;
-            id_left.disabled    = true;
-            id_stop.disabled    = true;
-            id_right.disabled   = true;
-            id_back.disabled    = true;
-    } else {
-            auto = false;
-            str_auto.innerHTML  = "Auto Off";
-            id_speed.disabled   = false;
-            id_forward.disabled = false;
-            id_left.disabled    = false;
-            id_stop.disabled    = false;
-            id_right.disabled   = false;
-            id_back.disabled    = false;
-        }
-    }
-}
-
-function print_speed_script(speeding) {
-    
-    var slider = document.getElementById("speed");
-    
-    if (accelerator) {
-        if (speeding) {
-            speed_script += 2;
-            if (speed_script > 255) {
-                speed_script = 255;
-            }
-        } else {
-            speed_script -= 2;
-            if (speed_script < 1) {
-                speed_script = 1;
-            }
-        }
-        slider.value = speed_script;
-        print_speed(speed_script);
-    } else {
-        return;
-    }
-    
-    setTimeout(print_speed_script, 5, speeding);
-}
-
-function print_speed (speed) {
-    var value_speed = document.getElementById("val_speed");
-    if (value_speed) {
-        value_speed.innerHTML = speed;
-    }
-}
-
 async function command_car(command, val) {
     var str = {
         execute: command,
         value:   val
     };
     
+    var id_speed   = document.getElementById("speed");
+    
     if (command == "forward_start") {
         command_stop = false;
+        id_speed.disabled = false;
         if (stop) {
-            stop = false;
             accelerator = true;
             print_speed_script(speedup);
         } else if (back == false) {
@@ -97,8 +36,8 @@ async function command_car(command, val) {
         }        
     } else if (command == "back_start") {
         command_stop = false;
+        id_speed.disabled = false;
         if (stop) {
-            stop = false;
             accelerator = true;
             print_speed_script(speedup);
         } else if (forward == false) {
@@ -180,7 +119,7 @@ async function get_status() {
             turn = data.turn;
             stop = data.stop;
             auto = data.auto;
-            set_auto(auto);
+            set_auto(auto, stop);
             speed_car = data.speed;
             speed_script = speed_car;
             print_speed(speed_car);
@@ -199,6 +138,78 @@ async function get_status() {
     }
 }
 
+function set_auto(autoOn, stop) {
+    
+    var str_auto   = document.getElementById("auto");
+    var id_speed   = document.getElementById("speed");
+    var id_forward = document.getElementById("btn_forward");
+    var id_left    = document.getElementById("btn_left");
+    var id_stop    = document.getElementById("btn_stop");
+    var id_right   = document.getElementById("btn_right");
+    var id_back    = document.getElementById("btn_back");
+    if (str_auto) {
+        if (autoOn) {
+            auto = true;
+            str_auto.innerHTML  = "Auto On";
+            id_speed.disabled   = true;
+            id_forward.disabled = true;
+            id_left.disabled    = true;
+            id_stop.disabled    = true;
+            id_right.disabled   = true;
+            id_back.disabled    = true;
+        } else {
+            auto = false;
+            str_auto.innerHTML  = "Auto Off";
+            id_speed.disabled   = false;
+            id_forward.disabled = false;
+            id_left.disabled    = false;
+            id_stop.disabled    = false;
+            id_right.disabled   = false;
+            id_back.disabled    = false;
+        }
+        if (stop) {
+            id_speed.disabled = true;
+        }
+    }
+}
+
+function print_speed_script(speeding) {
+    
+    var slider = document.getElementById("speed");
+    
+    if (accelerator) {
+        if (speeding) {
+            speed_script += 2;
+            if (speed_script > 255) {
+                speed_script = 255;
+            }
+        } else {
+            speed_script -= 2;
+            if (speed_script < 1) {
+                speed_script = 1;
+            }
+        }
+        slider.value = speed_script;
+        print_speed(speed_script);
+    } else {
+        return;
+    }
+    
+    setTimeout(print_speed_script, 5, speeding);
+}
+
+function print_speed (speed) {
+    
+    var value_speed = document.getElementById("val_speed");
+
+    if (value_speed) {
+        value_speed.innerHTML = speed;
+    }
+}
+
+get_status();
+
+// Upload zone
 
 function setFName(elem) {
     var fileName = elem.files[0].name;
@@ -258,6 +269,5 @@ async function upload(elem) {
     }
 }
 
-get_status();
 
 
