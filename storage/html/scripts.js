@@ -123,10 +123,6 @@ async function get_status() {
             speed_car = data.speed;
             speed_script = speed_car;
             print_speed(speed_car);
-            var slider = document.getElementById("speed");
-            if (slider) {
-                slider.value = speed_car;
-            }
         } else {
             var error = await response.text();
             var message = `${error}. HTTP error ${response.status}.`;
@@ -169,13 +165,13 @@ function set_auto(autoOn, stop) {
         }
         if (stop) {
             id_speed.disabled = true;
+            id_left.disabled    = true;
+            id_right.disabled   = true;
         }
     }
 }
 
 function print_speed_script(speeding) {
-    
-    var slider = document.getElementById("speed");
     
     if (accelerator) {
         if (speeding) {
@@ -189,7 +185,6 @@ function print_speed_script(speeding) {
                 speed_script = 1;
             }
         }
-        slider.value = speed_script;
         print_speed(speed_script);
     } else {
         return;
@@ -201,6 +196,11 @@ function print_speed_script(speeding) {
 function print_speed (speed) {
     
     var value_speed = document.getElementById("val_speed");
+    var slider = document.getElementById("speed");
+    
+    if (slider) {
+        slider.value = speed;
+    }
 
     if (value_speed) {
         value_speed.innerHTML = speed;
