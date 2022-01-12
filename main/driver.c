@@ -91,7 +91,8 @@ enum {
 typedef enum {
     motors_stop =    0b00000001,
     motors_forward = 0b00000010,
-    motors_back =    0b00000100
+    motors_back =    0b00000100,
+    motors_auto =    0b00001000
 } motors_status_t;
 
 typedef struct {
@@ -840,6 +841,22 @@ void deinit_driver() {
 
 /* ============================================================================================= */
 
+void automatic_car(bool automatic) {
+
+    if (!driver_car) {
+        ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
+        return;
+    }
+
+    if (automatic) {
+        ESP_LOGI(TAG, "Automatic mode on");
+        driver_car->motors->status = motors_auto;
+    } else {
+        ESP_LOGI(TAG, "Automatic mode off");
+        driver_car->motors->status = motors_stop;
+    }
+}
+
 void turn_left_car() {
 
     int16_t left = cmd_turn_left;
@@ -867,6 +884,11 @@ void turn_right_car() {
         return;
     }
 
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
+        return;
+    }
+
     if (xQueueSendToBack(driver_car->queue_driver, &right, (TickType_t)50) != pdPASS) {
         ESP_LOGE(TAG, "Not put to queue driver cmd \"turn_right\", command failed. (%s:%u)", __FILE__, __LINE__);
     }
@@ -883,17 +905,30 @@ void turn_stop_car() {
         return;
     }
 
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
+        return;
+    }
+
     if (xQueueSendToBack(driver_car->queue_driver, &stop, (TickType_t)50) != pdPASS) {
         ESP_LOGE(TAG, "Not put to queue driver cmd \"turn_stop\", command failed. (%s:%u)", __FILE__, __LINE__);
     }
 }
 
 void forward_start_car() {
+
     ESP_LOGI(TAG, "Forward start");
+
     if (!driver_car) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
+
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
+        return;
+    }
+
     forward_motors(driver_car->motors);
 }
 
@@ -908,17 +943,30 @@ void forward_stop_car() {
         return;
     }
 
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
+        return;
+    }
+
     if (xQueueSendToBack(driver_car->queue_driver, &stop, (TickType_t)50) != pdPASS) {
         ESP_LOGE(TAG, "Not put to queue driver cmd \"speed_stop\", command failed. (%s:%u)", __FILE__, __LINE__);
     }
 }
 
 void back_start_car() {
+
     ESP_LOGI(TAG, "Back start");
+
     if (!driver_car) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
+
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
+        return;
+    }
+
     back_motors(driver_car->motors);
 }
 
@@ -933,17 +981,30 @@ void back_stop_car() {
         return;
     }
 
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
+        return;
+    }
+
     if (xQueueSendToBack(driver_car->queue_driver, &stop, (TickType_t)50) != pdPASS) {
         ESP_LOGE(TAG, "Not put to queue driver cmd \"speed_stop\", command failed. (%s:%u)", __FILE__, __LINE__);
     }
 }
 
 void stop_car() {
+
     ESP_LOGI(TAG, "Stop");
+
     if (!driver_car) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
+
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
+        return;
+    }
+
     stop_motors(driver_car->motors);
 }
 
@@ -952,6 +1013,11 @@ void set_speed_car(int16_t speed) {
 
     if (!driver_car) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
+        return;
+    }
+
+    if (driver_car->motors->status & motors_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
 
@@ -987,9 +1053,11 @@ cJSON *get_status_car() {
     const char *back_key =    "back";
     const char *turn_key =    "turn";
     const char *stop_key =    "stop";
+    const char *auto_key =    "auto";
     const char *speed_key =   "speed";
     const char *speed_l_key = "speed_left";     /* only for control */
     const char *speed_r_key = "speed_right";    /* only for control */
+
 
     char *err = NULL;
 
@@ -1006,6 +1074,7 @@ cJSON *get_status_car() {
         cJSON_AddNumberToObject(status_root, forward_key, LOW);
         cJSON_AddNumberToObject(status_root, back_key, LOW);
         cJSON_AddNumberToObject(status_root, stop_key, LOW);
+        cJSON_AddNumberToObject(status_root, auto_key, LOW);
         cJSON_AddNumberToObject(status_root, speed_key, LOW);
         cJSON_AddNumberToObject(status_root, speed_l_key, LOW);
         cJSON_AddNumberToObject(status_root, speed_r_key, LOW);
@@ -1018,17 +1087,25 @@ cJSON *get_status_car() {
         else speed = right_speed;
 
         if (driver_car->motors->status & motors_forward) {
-            cJSON_AddNumberToObject(status_root, forward_key, HIGH);
-            cJSON_AddNumberToObject(status_root, back_key, LOW);
-            cJSON_AddNumberToObject(status_root, stop_key, LOW);
+            cJSON_AddTrueToObject(status_root, forward_key);
+            cJSON_AddFalseToObject(status_root, back_key);
+            cJSON_AddFalseToObject(status_root, stop_key);
+            cJSON_AddFalseToObject(status_root, auto_key);
         } else if (driver_car->motors->status & motors_back) {
-            cJSON_AddNumberToObject(status_root, forward_key, LOW);
-            cJSON_AddNumberToObject(status_root, back_key, HIGH);
-            cJSON_AddNumberToObject(status_root, stop_key, LOW);
+            cJSON_AddFalseToObject(status_root, forward_key);
+            cJSON_AddTrueToObject(status_root, back_key);
+            cJSON_AddFalseToObject(status_root, stop_key);
+            cJSON_AddFalseToObject(status_root, auto_key);
+        } else if (driver_car->motors->status & motors_auto) {
+            cJSON_AddFalseToObject(status_root, forward_key);
+            cJSON_AddFalseToObject(status_root, back_key);
+            cJSON_AddFalseToObject(status_root, stop_key);
+            cJSON_AddTrueToObject(status_root, auto_key);
         } else {
-            cJSON_AddNumberToObject(status_root, forward_key, LOW);
-            cJSON_AddNumberToObject(status_root, back_key, LOW);
-            cJSON_AddNumberToObject(status_root, stop_key, HIGH);
+            cJSON_AddFalseToObject(status_root, forward_key);
+            cJSON_AddFalseToObject(status_root, back_key);
+            cJSON_AddTrueToObject(status_root, stop_key);
+            cJSON_AddFalseToObject(status_root, auto_key);
             speed = left_speed = right_speed = 0;
         }
 
@@ -1037,6 +1114,13 @@ cJSON *get_status_car() {
         cJSON_AddNumberToObject(status_root, speed_l_key, left_speed);
         cJSON_AddNumberToObject(status_root, speed_r_key, right_speed);
         cJSON_AddNumberToObject(status_root, turn_key, driver_car->motors->turn);
+
+//        char *str = str = cJSON_Print(status_root);
+//
+//        if (str) {
+//            printf("%s\n", str);
+//            free(str);
+//        }
 
     }
 

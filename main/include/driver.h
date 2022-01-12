@@ -4,6 +4,7 @@
 esp_err_t init_driver();
 void deinit_driver();
 
+void automatic_car(bool automatic);
 void turn_left_car();
 void turn_right_car();
 void turn_stop_car();

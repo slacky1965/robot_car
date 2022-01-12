@@ -94,7 +94,7 @@ static esp_err_t webserver_car(httpd_req_t *req) {
     const char *stop =          "stop";
     const char *speed =         "speed";
     const char *value =         "value";
-//    const char *led =           "led";
+    const char *automatic =     "auto";
     const char *key =           "execute";
     char *err = NULL;
 
@@ -170,8 +170,17 @@ static esp_err_t webserver_car(httpd_req_t *req) {
         back_start_car();
     } else if (strcmp(back_stop, command) == 0) {
         back_stop_car();
-//    } else if (strcmp(led, command) == 0) {
-//        set_camera_led();
+    } else if (strcmp(automatic, command) == 0) {
+        command_key = cJSON_GetObjectItem(root, value);
+        if (command_key == NULL) {
+            cJSON_Delete(root);
+            err = "Value auto key not found";
+            ESP_LOGE(TAG, "%s. (%s:%u)", err, __FILE__, __LINE__);
+            httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, err);
+            return ESP_FAIL;
+        }
+        bool auto_val = cJSON_IsTrue(command_key);
+        automatic_car(auto_val);
     } else if (strcmp(speed, command) == 0) {
         command_key = cJSON_GetObjectItem(root, value);
         if (command_key == NULL) {

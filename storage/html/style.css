@@ -39,7 +39,12 @@ body {
     -webkit-transform: rotate(45deg);
 }
 
-.led {
+.auto {
+    margin-top: 20px;
+    width: 30%;
+}
+
+.upload {
     margin-top: 20px;
     width: 30%;
 }
@@ -50,9 +55,4 @@ body {
 
 .stop-button {
     margin: 5px;
-}
-
-#camera-img {
-	max-width: 100%;
-    height: auto;
 }

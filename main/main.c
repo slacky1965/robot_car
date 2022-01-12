@@ -21,6 +21,14 @@
 
 static char *TAG = "robot_car_main";
 
+void main_task(void *args) {
+
+    while(1) {
+
+        vTaskDelay(100/portTICK_PERIOD_MS);
+    }
+}
+
 void app_main(void) {
     //Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -45,15 +53,14 @@ void app_main(void) {
     init_spiffs();
     init_usonic();
     init_driver();
-    init_driver();
     init_pulse();
-    init_pulse();
-    init_usonic();
-    vTaskDelay(5000/portTICK_PERIOD_MS);
-    deinit_pulse();
-    deinit_driver();
-    deinit_driver();
-    deinit_usonic();
+//    vTaskDelay(5000/portTICK_PERIOD_MS);
+//    deinit_pulse();
+//    deinit_pulse();
+//    deinit_driver();
+//    deinit_driver();
+//    deinit_usonic();
+//    deinit_usonic();
     int16_t distance = -1;
 
     for (;;) {

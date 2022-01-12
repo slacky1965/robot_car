@@ -8,6 +8,21 @@ var back = false;
 var stop = true;
 var turn = 90;
 var command_stop = false;
+var auto = false;
+
+function set_auto(args) {
+    var str_auto = document.getElementById("auto");
+    if (str_auto) {
+        console.log("set_auto "+args);
+        if (args) {
+            auto = true;
+            str_auto.innerHTML = "Auto On";
+        } else {
+            auto = false;
+            str_auto.innerHTML = "Auto Off";
+        }
+    }
+}
 
 function print_speedup_script() {
 
@@ -108,7 +123,9 @@ async function command_car(command, val) {
         print_speedup = false; 
         print_slowdown = false;
         stop = true;
-   }
+    } else if (command == "auto") {
+        str.value = !auto;
+    }
     
     
     try {
@@ -139,7 +156,10 @@ async function command_car(command, val) {
             if (command == "forward_stop" || command == "back_stop" || command == "stop" || command == "speed" || command == "left_stop" || command == "right_stop") {
                 command_stop = true;
                 get_status();
+            } else if (command == "auto") {
+                get_status();
             }
+            
             console.log("Return command from server - "+data.command);
         } else {
             var error = await response.text();
@@ -163,6 +183,9 @@ async function get_status() {
             back = data.back;
             turn = data.turn;
             stop = data.stop;
+            auto = data.auto;
+            console.log("get_status auto "+auto);
+            set_auto(auto);
             speed_car = data.speed;
             speed_script = speed_car;
             print_speed(speed_car);
@@ -241,6 +264,7 @@ async function upload(elem) {
 }
 
 get_status();
+//set_auto(false);
 //print_speedup_script();
 //print_slowdown_script();
 
