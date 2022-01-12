@@ -17,7 +17,7 @@ async function command_car(command, val) {
         value:   val
     };
     
-    var id_speed   = document.getElementById("speed");
+    var id_speed = document.getElementById("speed");
     
     if (command == "forward_start") {
         command_stop = false;
