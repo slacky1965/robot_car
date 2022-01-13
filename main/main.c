@@ -71,7 +71,7 @@ void app_main(void) {
             printf("distance - %d cm\n", distance);
         }
 
-//        printf("Free memory: %d bytes\n", esp_get_free_heap_size());
+        printf("Free memory: %d bytes\n", esp_get_free_heap_size());
         vTaskDelay(1000/portTICK_PERIOD_MS);
     }
 

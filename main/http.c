@@ -228,10 +228,10 @@ static esp_err_t webserver_get_car_status(httpd_req_t *req) {
             httpd_resp_set_type(req, "application/json");
             httpd_resp_send(req, str, strlen(str));
             free(str);
-            free(root);
+            cJSON_Delete(root);
             return ESP_OK;
         }
-        free(root);
+        cJSON_Delete(root);
     }
 
     httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "No JSON object");
