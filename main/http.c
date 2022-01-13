@@ -220,9 +220,19 @@ static esp_err_t webserver_car(httpd_req_t *req) {
 static esp_err_t webserver_get_car_status(httpd_req_t *req) {
 
     char *str;
-    cJSON *root = get_status_car();
+    cJSON *root = NULL;
+    esp_err_t ret = get_status_car(&root);
 
-    if (root) {
+    if (ret == ESP_FAIL) {
+        if (root == NULL) {
+            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "No JSON object");
+            return ESP_FAIL;
+        } else {
+            cJSON_Delete(root);
+            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "No driver initialized");
+            return ESP_FAIL;
+        }
+    } else {
         str = cJSON_Print(root);
         if (str) {
             httpd_resp_set_type(req, "application/json");
@@ -234,7 +244,7 @@ static esp_err_t webserver_get_car_status(httpd_req_t *req) {
         cJSON_Delete(root);
     }
 
-    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "No JSON object");
+    httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Extraction error from the JSON object");
     return ESP_FAIL;
 }
 

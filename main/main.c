@@ -54,7 +54,7 @@ void app_main(void) {
     init_usonic();
     init_driver();
     init_pulse();
-//    vTaskDelay(5000/portTICK_PERIOD_MS);
+    vTaskDelay(1000/portTICK_PERIOD_MS);
 //    deinit_pulse();
 //    deinit_pulse();
 //    deinit_driver();

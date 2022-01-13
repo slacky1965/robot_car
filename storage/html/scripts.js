@@ -127,6 +127,15 @@ async function get_status() {
             var error = await response.text();
             var message = `${error}. HTTP error ${response.status}.`;
             alert(message);
+            forward = false;
+            back = false;
+            turn = false;
+            stop = true;
+            auto = false;
+            set_auto(auto, stop);
+            speed_car = 0;
+            speed_script = speed_car;
+            print_speed(speed_car);
         }
     }
     catch (error) {

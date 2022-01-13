@@ -14,6 +14,6 @@ void back_start_car();
 void back_stop_car();
 void stop_car();
 void set_speed_car(int16_t speed);
-cJSON *get_status_car();
+esp_err_t get_status_car(cJSON **root);
 
 #endif /* MAIN_INCLUDE_DRIVER_H_ */

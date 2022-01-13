@@ -1047,7 +1047,7 @@ void set_speed_car(int16_t speed) {
     }
 }
 
-cJSON *get_status_car() {
+esp_err_t get_status_car(cJSON **root) {
 
     int16_t left_speed, right_speed, speed;
 
@@ -1065,22 +1065,17 @@ cJSON *get_status_car() {
 
     cJSON *status_root = cJSON_CreateObject();
 
+    *root = status_root;
+
     if (status_root == NULL) {
         err = "Failed to create status_root json object";
         ESP_LOGE(TAG, "%s. (%s:%u)", err, __FILE__, __LINE__);
-        return NULL;
+        return ESP_FAIL;
     }
 
     if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
-        cJSON_AddFalseToObject(status_root, forward_key);
-        cJSON_AddFalseToObject(status_root, back_key);
-        cJSON_AddFalseToObject(status_root, stop_key);
-        cJSON_AddFalseToObject(status_root, auto_key);
-        cJSON_AddNumberToObject(status_root, speed_key, 0);
-        cJSON_AddNumberToObject(status_root, speed_l_key, 0);
-        cJSON_AddNumberToObject(status_root, speed_r_key, 0);
-        cJSON_AddNumberToObject(status_root, turn_key, STEERING_STRAIGHT);
+        return ESP_FAIL;
     } else {
         left_speed =  map(driver_car->motors->motor_left.new_value_speed, VAL_SPEED_MIN, VAL_SPEED_MAX, SPEED_MIN, SPEED_MAX);
         right_speed =  map(driver_car->motors->motor_right.new_value_speed, VAL_SPEED_MIN, VAL_SPEED_MAX, SPEED_MIN, SPEED_MAX);
@@ -1127,6 +1122,6 @@ cJSON *get_status_car() {
     }
 
 
-    return status_root;
+    return ESP_OK;
 }
 
