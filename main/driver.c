@@ -843,7 +843,7 @@ void deinit_driver() {
 
 void automatic_car(bool automatic) {
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -865,7 +865,7 @@ void turn_left_car() {
 
     ESP_LOGI(TAG, "Turn left start");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -881,7 +881,7 @@ void turn_right_car() {
 
     ESP_LOGI(TAG, "Turn right start");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -902,7 +902,7 @@ void turn_stop_car() {
 
     ESP_LOGI(TAG, "Turn stop");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -921,7 +921,7 @@ void forward_start_car() {
 
     ESP_LOGI(TAG, "Forward start");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -940,7 +940,7 @@ void forward_stop_car() {
 
     ESP_LOGI(TAG, "Forward stop");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -959,7 +959,7 @@ void back_start_car() {
 
     ESP_LOGI(TAG, "Back start");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -978,7 +978,7 @@ void back_stop_car() {
 
     ESP_LOGI(TAG, "Back stop");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -997,7 +997,7 @@ void stop_car() {
 
     ESP_LOGI(TAG, "Stop");
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
@@ -1013,7 +1013,7 @@ void stop_car() {
 void set_speed_car(int16_t speed) {
     int16_t value_speed;
 
-    if (!driver_car) {
+    if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
         return;
     }
