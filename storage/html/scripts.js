@@ -110,7 +110,7 @@ async function command_car(command, val) {
 
 async function get_status() {
     
-    var id_index    = document.getElementById("index");
+    var id_index = document.getElementById("index");
     
     if (id_index) {
         try {
@@ -157,7 +157,6 @@ function set_auto(message) {
     var id_upload  = document.getElementById("btn_upload");
 
     if (driver_not_found) {
-//        id_auto.innerHTML = "Driver not found";
         id_auto.innerHTML = message;
         id_auto.disabled = true;
         id_speed.disabled = true;
@@ -168,7 +167,6 @@ function set_auto(message) {
         id_back.disabled = true;
     } else {
         if (auto) {
-//            auto = true;
             id_auto.innerHTML = "Auto On";
             id_speed.disabled = true;
             id_forward.disabled = true;
@@ -178,7 +176,6 @@ function set_auto(message) {
             id_back.disabled = true;
             id_upload.disabled = true;
         } else {
-//            auto = false;
             id_auto.innerHTML = "Auto Off";
             id_speed.disabled = false;
             id_forward.disabled = false;
