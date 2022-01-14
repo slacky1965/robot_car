@@ -10,6 +10,7 @@ var stop = true;
 var turn = 90;
 var command_stop = false;
 var auto = false;
+var driver_not_found = true;
 
 async function command_car(command, val) {
     var str = {
@@ -109,74 +110,91 @@ async function command_car(command, val) {
 
 async function get_status() {
     
-    try {
-        var response = await fetch("car_status");
-        if (response.ok) {
-            var data = await response.json();
-            console.log(data);
-            forward = data.forward;
-            back = data.back;
-            turn = data.turn;
-            stop = data.stop;
-            auto = data.auto;
-            set_auto(auto, stop);
-            speed_car = data.speed;
-            speed_script = speed_car;
-            print_speed(speed_car);
-        } else {
-            var error = await response.text();
-            var message = `${error}. HTTP error ${response.status}.`;
-            alert(message);
-            forward = false;
-            back = false;
-            turn = false;
-            stop = true;
-            auto = false;
-            set_auto(auto, stop);
-            speed_car = 0;
-            speed_script = speed_car;
-            print_speed(speed_car);
+    var id_index    = document.getElementById("index");
+    
+    if (id_index) {
+        try {
+            var response = await fetch("car_status");
+            if (response.ok) {
+                var data = await response.json();
+                console.log(data);
+                forward = data.forward;
+                back = data.back;
+                turn = data.turn;
+                stop = data.stop;
+                auto = data.auto;
+                driver_not_found = false;
+                set_auto();
+                speed_car = data.speed;
+                speed_script = speed_car;
+                print_speed(speed_car);
+            } else {
+                var error = await response.text();
+                var message = `${error}. HTTP error ${response.status}.`;
+                alert(message);
+                driver_not_found = true;
+                set_auto(error);
+                speed_car = 0;
+                speed_script = speed_car;
+                print_speed(speed_car);
+            }
         }
-    }
-    catch (error) {
-        alert(`Error! ${error}`);
+        catch (error) {
+            alert(`Error! ${error}`);
+        }
     }
 }
 
-function set_auto(autoOn, stop) {
+function set_auto(message) {
     
-    var str_auto   = document.getElementById("auto");
+    var id_auto    = document.getElementById("auto");
     var id_speed   = document.getElementById("speed");
     var id_forward = document.getElementById("btn_forward");
     var id_left    = document.getElementById("btn_left");
     var id_stop    = document.getElementById("btn_stop");
     var id_right   = document.getElementById("btn_right");
     var id_back    = document.getElementById("btn_back");
-    if (str_auto) {
-        if (autoOn) {
-            auto = true;
-            str_auto.innerHTML  = "Auto On";
-            id_speed.disabled   = true;
+    var id_upload  = document.getElementById("btn_upload");
+
+    if (driver_not_found) {
+//        id_auto.innerHTML = "Driver not found";
+        id_auto.innerHTML = message;
+        id_auto.disabled = true;
+        id_speed.disabled = true;
+        id_forward.disabled = true;
+        id_left.disabled = true;
+        id_stop.disabled = true;
+        id_right.disabled = true;
+        id_back.disabled = true;
+    } else {
+        if (auto) {
+//            auto = true;
+            id_auto.innerHTML = "Auto On";
+            id_speed.disabled = true;
             id_forward.disabled = true;
-            id_left.disabled    = true;
-            id_stop.disabled    = true;
-            id_right.disabled   = true;
-            id_back.disabled    = true;
+            id_left.disabled = true;
+            id_stop.disabled = true;
+            id_right.disabled = true;
+            id_back.disabled = true;
+            id_upload.disabled = true;
         } else {
-            auto = false;
-            str_auto.innerHTML  = "Auto Off";
-            id_speed.disabled   = false;
+//            auto = false;
+            id_auto.innerHTML = "Auto Off";
+            id_speed.disabled = false;
             id_forward.disabled = false;
-            id_left.disabled    = false;
-            id_stop.disabled    = false;
-            id_right.disabled   = false;
-            id_back.disabled    = false;
+            id_left.disabled = false;
+            id_stop.disabled = false;
+            id_right.disabled = false;
+            id_back.disabled = false;
         }
         if (stop) {
-            id_speed.disabled   = true;
-            id_left.disabled    = true;
-            id_right.disabled   = true;
-            id_stop.disabled    = true;
+            id_speed.disabled = true;
+            id_left.disabled = true;
+            id_right.disabled = true;
+            id_stop.disabled = true;
+            id_upload.disabled = false;
+        } else {
+            id_upload.disabled = true;
         }
     }
 }
@@ -208,13 +226,8 @@ function print_speed (speed) {
     var value_speed = document.getElementById("val_speed");
     var slider = document.getElementById("speed");
     
-    if (slider) {
-        slider.value = speed;
-    }
-
-    if (value_speed) {
-        value_speed.innerHTML = speed;
-    }
+    slider.value = speed;
+    value_speed.innerHTML = speed;
 }
 
 get_status();
