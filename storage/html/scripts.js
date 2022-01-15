@@ -292,7 +292,7 @@ function not_upload() {
     
     if (!document.getElementById("index")) {
         if (!stop) {
-            document.location.replace("index.html");
+            window.location.replace("index.html");
         }
     }
     
