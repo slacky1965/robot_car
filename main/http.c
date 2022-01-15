@@ -34,7 +34,6 @@
 #define ROOT        "/"
 #define INDEX       "/index.html"
 #define UPLOAD      "/upload/*"
-#define CAMERA      "/camera"
 #define CAR         "/car"
 #define GET_STATUS  "/car_status"
 
