@@ -43,25 +43,25 @@
 #define SPEEDUP_STEP        100
 
 /*
- *      cmd_no command -         no command
+ *      cmd_no command         - no command
  *
- *      cmd_turn_left command -  smooth left turn
+ *      cmd_turn_left command  - smooth left turn
  *
  *      cmd_turn_right command - smooth right turn
  *
- *      cmd_turn_stop command -  stop further turning the steering wheel
+ *      cmd_turn_stop command  - stop further turning the steering wheel
  *
- *      cmd_speedup command -    smooth increase in speed
+ *      cmd_speedup command    - smooth increase in speed
  *
- *      cmd_slowdown command -   smooth decrease in speed
+ *      cmd_slowdown command   - smooth decrease in speed
  *
- *      cmd_speedstop command -  stop changing speed
+ *      cmd_speedstop command  - stop changing speed
  *
- *      cmd_forward command -    if back - smooth decrease in speed
+ *      cmd_forward command    - if back - smooth decrease in speed
  *                               if forward - smooth increase in speed
  *                               if left or right - straight
  *
- *      cmd_back command -       if forward - smooth decrease in speed
+ *      cmd_back command       - if forward - smooth decrease in speed
  *                               if back - smooth increase in speed
  *                               if left or right - straight
  *
@@ -79,13 +79,15 @@ enum {
 };
 
 /*
- *  rear wheel drive status
+ *  car status
  *
- *      car_stop status -    the motors are stopped
+ *      car_stop status    - the motors are stopped
  *
  *      car_forward status - motors forward
  *
- *      car_back status -    motors back
+ *      car_back status    - motors back
+ *
+ *      car_auto           - automatic
  *
  */
 typedef enum {
