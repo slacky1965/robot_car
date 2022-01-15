@@ -124,23 +124,25 @@ async function get_status() {
                 stop = data.stop;
                 auto = data.auto;
                 driver_not_found = false;
-                set_auto();
                 speed_car = data.speed;
                 speed_script = speed_car;
-                print_speed(speed_car);
+                set_auto();
             } else {
                 var error = await response.text();
                 var message = `${error}. HTTP error ${response.status}.`;
                 alert(message);
                 driver_not_found = true;
-                set_auto(error);
                 speed_car = 0;
                 speed_script = speed_car;
-                print_speed(speed_car);
+                set_auto(error);
             }
         }
         catch (error) {
             alert(`Error! ${error}`);
+            driver_not_found = true;
+            speed_car = 0;
+            speed_script = speed_car;
+            set_auto(error);
         }
     }
 }
@@ -155,6 +157,8 @@ function set_auto(message) {
     var id_right   = document.getElementById("btn_right");
     var id_back    = document.getElementById("btn_back");
     var id_upload  = document.getElementById("btn_upload");
+    
+    print_speed(speed_car);
 
     if (driver_not_found) {
         id_auto.innerHTML = message;
