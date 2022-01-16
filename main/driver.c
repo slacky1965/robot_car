@@ -83,9 +83,9 @@ enum {
  *
  *      car_stop status    - the motors are stopped
  *
- *      car_forward status - motors forward
+ *      car_forward status - moving forward
  *
- *      car_back status    - motors back
+ *      car_back status    - reversing
  *
  *      car_auto           - automatic
  *
