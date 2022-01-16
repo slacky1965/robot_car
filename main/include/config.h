@@ -37,7 +37,6 @@
 #define STEERING_ANGLE_MIN  45              /* 90 -> 45  left turn                  */
 #define STEERING_ANGLE_MAX  135             /* 90 -> 135 right turn                 */
 #define STEERING_STRAIGHT   90
-#define NOTHING             255
 #define SERVO_MIN_US        504
 #define SERVO_MAX_US        2360
 #define STEERING_DELAY      5               /* turning speed steering servo         */
