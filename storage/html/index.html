@@ -16,22 +16,22 @@
             <div style="text-align: center;"><br />Speed: <span id="val_speed"></span><br />
                 <input type="range" min="1" max="255" class="slider" id="speed" onmouseup="command_car('speed', Number(this.value))" ontouchend="command_car('speed', Number(this.value))" oninput="print_speed(Number(this.value))">
             </div><br />
-            <button class="button up-button" type="button" id="btn_forward" onmousedown="command_car('forward_start')" onmouseup="command_car('forward_stop')" ontouchstart="command_car('forward_start')" ontouchend="command_car('forward_stop')">
+            <button class="button up-button" type="button" id="btn_forward" onmousedown="command_car('forward_start')" onmouseup="command_car('forward_stop')" ontouchstart="touch_command_car('forward_start')" ontouchend="touch_command_car('forward_stop')">
                 <i class="arrow up"></i></button>
             <br />
-            <button class="button" type="button" id="btn_left" onmousedown="command_car('left_start')" onmouseup="command_car('left_stop')" ontouchstart="command_car('left_start')" ontouchend="command_car('left_stop')"> <i 
+            <button class="button" type="button" id="btn_left" onmousedown="command_car('left_start')" onmouseup="command_car('left_stop')" ontouchstart="touch_command_car('left_start')" ontouchend="touch_command_car('left_stop')"> <i 
                     class="arrow left"></i></button>
 
-            <button class="button stop-button" type="button" id="btn_stop" onmousedown="command_car('stop')" ontouchstart="command_car('stop')"> <i
+            <button class="button stop-button" type="button" id="btn_stop" onmousedown="command_car('stop')"> <i
                         class="stop"></i>Stop</button>
 
-            <button class="button" type="button" id="btn_right" onmousedown="command_car('right_start')" onmouseup="command_car('right_stop')" ontouchstart="command_car('right_start')" ontouchend="command_car('right_stop')"><i
+            <button class="button" type="button" id="btn_right" onmousedown="command_car('right_start')" onmouseup="command_car('right_stop')" ontouchstart="touch_command_car('right_start')" ontouchend="touch_command_car('right_stop')"><i
                     class="arrow right"></i></button>
             <br />
-            <button class="button" type="button" id="btn_back" onmousedown="command_car('back_start')" onmouseup="command_car('back_stop')" ontouchstart="command_car('back_start')" ontouchend="command_car('back_stop')"><i
+            <button class="button" type="button" id="btn_back" onmousedown="command_car('back_start')" onmouseup="command_car('back_stop')" ontouchstart="touch_command_car('back_start')" ontouchend="touch_command_car('back_stop')"><i
                 class="arrow down"></i></button>
             <br />
-            <button class="button auto" id="auto" type="button" onmousedown="command_car('auto')" ontouchstart="command_car('auto')"></button>
+            <button class="button auto" id="auto" type="button" onmousedown="command_car('auto')"></button>
         </div>
         <br /><br />
         <button class="button upload" id="btn_upload" onclick="window.location='/upload.html';" value="Uploader">Uploader</button>

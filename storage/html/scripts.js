@@ -12,11 +12,29 @@ var command_stop = false;
 var auto = false;
 var driver_not_found = true;
 
+function touch_command_car(command, val) {
+    
+    if (driver_not_found) {
+        return;
+    } else if (auto) {
+        if (command != "auto") {
+            return;
+        }
+    } else if (stop) {
+        if (command == "left_start" || command == "left_stop" || command == "right_start" || command == "right_stop") {
+            return;
+        }
+    }
+    
+    command_car(command, val);
+}
+
 async function command_car(command, val) {
     var str = {
         execute: command,
         value:   val
     };
+    
     
     var id_speed = document.getElementById("speed");
     
@@ -127,7 +145,9 @@ async function get_status() {
         } else {
             var error = await response.text();
             var message = `${error}. HTTP error ${response.status}.`;
-            alert(message);
+            if (document.getElementById("index")) {
+                alert(message);
+            }
             driver_not_found = true;
             speed_car = 0;
             speed_script = speed_car;
