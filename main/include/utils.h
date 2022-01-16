@@ -1,9 +1,8 @@
 #ifndef MAIN_INCLUDE_UTILS_H_
 #define MAIN_INCLUDE_UTILS_H_
 
-#define MOUNT_POINT_SPIFFS  "/spiffs"
-#define DELIM               "/"
-#define DELIM_CHR           '/'
+#include "config.h"
+
 #define MAX_BUFF_RW         2048
 
 bool get_status_spiffs();

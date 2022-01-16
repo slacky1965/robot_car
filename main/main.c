@@ -45,10 +45,12 @@ void app_main(void) {
     setNullWiFiConfigDefault();
 
     webserver_init(HTML_PATH);
-//    videoserver_init();
 
+#ifdef STA_MODE
     startWiFiSTA();
-//    startWiFiAP();
+#else
+    startWiFiAP();
+#endif
 
     init_spiffs();
     init_usonic();

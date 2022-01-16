@@ -12,35 +12,6 @@
 #include "driver.h"
 #include "pulse.h"
 
-#define LOW                 0
-#define HIGH                1
-
-#define ANGLE_MIN           0
-#define ANGLE_MAX           180
-#define STEERING_ANGLE_MIN  45              /* 90 -> 45  left turn                  */
-#define STEERING_ANGLE_MAX  135             /* 90 -> 135 right turn                 */
-#define STEERING_STRAIGHT   90
-#define NOTHING             255
-#define SERVO_MIN_US        504
-#define SERVO_MAX_US        2360
-#define STEERING_DELAY      5               /* turning speed steering servo         */
-#define STEERING_STEP       5
-#define STEERING_CENTER     0               /* correction for straight of steering in degrees . Example -5 or 10 */
-#define SERVO_PWM_GPIO      GPIO_NUM_21     /* channel steering                     */
-
-#define LEFT_MOTOR_GPIO_1   GPIO_NUM_16     /* First power GPIO of left motor       */
-#define LEFT_MOTOR_GPIO_2   GPIO_NUM_17     /* Second power GPIO of left motor      */
-#define RIGHT_MOTOR_GPIO_1  GPIO_NUM_18     /* First power GPIO of right motor      */
-#define RIGHT_MOTOR_GPIO_2  GPIO_NUM_19     /* Second power GPIO of right motor     */
-#define LEFT_SPD_PWM_GPIO   GPIO_NUM_22     /* GPIO for left motor speed variation  */
-#define RIGHT_SPD_PWM_GPIO  GPIO_NUM_23     /* GPIO for right motor speed variation */
-
-#define SPEED_MIN           1               /* speed 1-255 map to 700-5000 */
-#define SPEED_MAX           255
-#define VAL_SPEED_MIN       700
-#define VAL_SPEED_MAX       5000
-#define SPEED_TURN_STEP     70
-#define SPEEDUP_STEP        100
 
 /*
  *      cmd_no command         - no command
@@ -150,10 +121,7 @@ static char *TAG = "robot_car_driver";
 
 driver_t *driver_car = NULL;
 
-/* ============================================================================================= */
-/*                                      Private zone                                             */
-/* ============================================================================================= */
-
+/*--------------------------------------Private Zone--------------------------------------------*/
 
 long map(long x, long in_min, long in_max, long out_min, long out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -749,9 +717,7 @@ static void set_speed_motors(int16_t speed) {
 }
 
 
-/* ============================================================================================= */
-/*                                      Public zone                                              */
-/* ============================================================================================= */
+/*--------------------------------------Public Zone----------------------------------------------*/
 
 esp_err_t init_driver() {
 
@@ -869,6 +835,11 @@ void turn_left_car() {
 
     if (driver_car == NULL) {
         ESP_LOGE(TAG, "No driver device created. (%s:%d)", __FILE__, __LINE__);
+        return;
+    }
+
+    if (driver_car->motors->status & car_auto) {
+        ESP_LOGI(TAG, "Automatic mode is set!");
         return;
     }
 

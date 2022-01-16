@@ -6,14 +6,7 @@
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 
-
-#define INPUT_LEFT      4                   // Pulse Input GPIO left motor
-#define INPUT_RIGHT     5                   // Pulse Input GPIO right motor
-#define UNIT_LEFT       PCNT_UNIT_0         // Unit left
-#define UNIT_RIGHT      PCNT_UNIT_1         // Unit right
-#define CHANNEL         PCNT_CHANNEL_0      // Channel left and right
-#define PULSE_PER_TURN  11                  // number of pulses per rotation
-#define COUNT_TIMEOUT   1000                // timeout without pulse in ms
+#include "pulse.h"
 
 typedef struct {
     uint64_t        time_previous;

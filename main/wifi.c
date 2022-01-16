@@ -8,7 +8,6 @@
 #include "esp_log.h"
 
 #include "wifi.h"
-#include "utils.h"
 
 #define WIFI_CONNECTED_BIT 		BIT0
 #define WIFI_FAIL_BIT      		BIT1

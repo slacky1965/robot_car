@@ -1,6 +1,8 @@
 #ifndef MAIN_INCLUDE_USONIC_H_
 #define MAIN_INCLUDE_USONIC_H_
 
+#include "config.h"
+
 esp_err_t init_usonic();
 void deinit_usonic();
 int16_t get_distance();

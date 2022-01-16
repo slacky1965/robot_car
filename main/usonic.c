@@ -7,12 +7,6 @@
 
 #include "usonic.h"
 
-#define LOW             0
-#define HIGH            1
-
-/* defined pin for ultrasonic HC-SR04 */
-#define TRIG_GPIO       GPIO_NUM_13
-#define ECHO_GPIO       GPIO_NUM_12
 #define TRIG_LOW_DELAY  4
 #define TRIG_HIGH_DELAY 10
 #define BUFF_SIZE       8
