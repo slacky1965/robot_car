@@ -200,14 +200,24 @@ function set_auto(message) {
 
 function print_speed_script(speeding) {
     
+    var ua = navigator.userAgent;
+    
     if (accelerator) {
         if (speeding) {
-            speed_script += 2;
+            if (ua.search(/Firefox/) > 0) {
+                speed_script += 2;
+            } else {
+                speed_script++;
+            }
             if (speed_script > 255) {
                 speed_script = 255;
             }
         } else {
-            speed_script -= 2;
+            if (ua.search(/Firefox/) > 0) {
+                speed_script -= 2;
+            } else {
+                speed_script--;
+            }
             if (speed_script < 1) {
                 speed_script = 1;
             }
