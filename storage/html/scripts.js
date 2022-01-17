@@ -12,7 +12,7 @@ var command_stop = false;
 var auto = false;
 var driver_not_found = true;
 
-function touch_command_car(command, val) {
+async function command_car(command, val) {
     
     if (driver_not_found) {
         return;
@@ -26,10 +26,6 @@ function touch_command_car(command, val) {
         }
     }
     
-    command_car(command, val);
-}
-
-async function command_car(command, val) {
     var str = {
         execute: command,
         value:   val
